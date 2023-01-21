@@ -1,0 +1,50 @@
+version: "3.5"
+
+services:
+  gin-stores1:
+    container_name: gin-stores1
+    image: gin-stores1
+    build:
+      context: ./stores1
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    restart: always
+    networks:
+      - api-gateway
+
+  gin-stores2:
+    container_name: gin-stores2
+    image: gin-stores2
+    build:
+      context: ./stores2
+      dockerfile: Dockerfile
+    ports:
+      - 3002:3002
+    restart: always
+    networks:
+      - api-gateway
+
+  gateway:
+    container_name: gateway
+    image: gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports: 
+      - 80:80
+    depends_on:
+      - gin-stores1
+      - gin-stores2
+    links:
+      - gin-stores1
+      - gin-stores2
+    restart: always
+    networks:
+      - api-gateway
+
+networks:
+  api-gateway:
+    driver: bridge
+
+
